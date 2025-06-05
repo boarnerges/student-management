@@ -9,7 +9,6 @@ import {
 } from "@chakra-ui/react";
 import { Student } from "@/types/student";
 import { useState, useEffect } from "react";
-import { useRouter } from "next/router";
 
 export interface StudentFormProps {
   initialData?: Student;
@@ -18,7 +17,7 @@ export interface StudentFormProps {
 }
 
 export const StudentForm = ({ initialData, onSubmit }: StudentFormProps) => {
-  const router = useRouter();
+  // const router = useRouter();
 
   const [form, setForm] = useState<Omit<Student, "id">>({
     name: "",
@@ -34,7 +33,7 @@ export const StudentForm = ({ initialData, onSubmit }: StudentFormProps) => {
 
   useEffect(() => {
     if (initialData) {
-      const { id, ...rest } = initialData;
+      const { ...rest } = initialData;
       setForm(rest);
     }
   }, [initialData]);

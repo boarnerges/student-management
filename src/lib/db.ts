@@ -2,7 +2,7 @@
 
 import { Student } from "@/types/student";
 
-export let students: Student[] = [
+export const students: Student[] = [
   {
     id: "1",
     name: "Alice Johnson",

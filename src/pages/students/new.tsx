@@ -1,11 +1,12 @@
 import { useRouter } from "next/router";
 import { Box, Heading } from "@chakra-ui/react";
 import { StudentForm } from "@/components/StudentForm";
+import type { Student } from "@/types/student";
 
 export default function NewStudentPage() {
   const router = useRouter();
 
-  const handleCreate = async (data: any) => {
+  const handleCreate = async (data: Omit<Student, "id">) => {
     await fetch("/api/students", {
       method: "POST",
       headers: {

@@ -8,11 +8,12 @@ import {
   Stack,
   Flex,
   HStack,
+  Alert,
 } from "@chakra-ui/react";
-import { Alert } from "@chakra-ui/react";
 import { Student } from "@/types/student";
 import { useState } from "react";
 import Link from "next/link";
+import { fetchStudentById, deleteStudentById } from "@/lib/api";
 
 interface StudentDetailPageProps {
   student: Student | null;
@@ -36,18 +37,7 @@ export default function StudentDetailPage({ student }: StudentDetailPageProps) {
     setDeleting(true);
     setError(null);
     try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/students/${student.id}`,
-        {
-          method: "DELETE",
-        }
-      );
-
-      if (!res.ok) {
-        throw new Error("Failed to delete student");
-      }
-
-      // Redirect to student list after deletion
+      await deleteStudentById(student.id);
       router.push("/");
     } catch (err) {
       setError((err as Error).message);
@@ -109,39 +99,15 @@ export default function StudentDetailPage({ student }: StudentDetailPageProps) {
     </Box>
   );
 }
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { id } = context.params!;
+  console.log("Fetching student by id:", id); // Add this
 
-// Fetch student data with SSR
-export const getServerSideProps: GetServerSideProps<
-  StudentDetailPageProps
-> = async (context) => {
   try {
-    const { id } = context.params!;
-
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/students/${id}`
-    );
-
-    if (res.status === 404) {
-      return {
-        props: {
-          student: null,
-        },
-      };
-    }
-
-    const student: Student = await res.json();
-
-    return {
-      props: {
-        student,
-      },
-    };
+    const student = await fetchStudentById(id as string);
+    return { props: { student } };
   } catch (error) {
     console.error("Error fetching student:", error);
-    return {
-      props: {
-        student: null,
-      },
-    };
+    return { props: { student: null } };
   }
 };

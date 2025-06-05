@@ -5,6 +5,8 @@ import { StudentForm } from "@/components/StudentForm";
 import { Student } from "@/types/student";
 import Link from "next/link";
 import { toast } from "react-toastify";
+import { updateStudent } from "@/lib/api";
+import { fetchStudentById } from "@/lib/api";
 
 interface EditStudentPageProps {
   student: Student;
@@ -15,19 +17,13 @@ export default function EditStudentPage({ student }: EditStudentPageProps) {
 
   const handleUpdate = async (updatedData: Omit<Student, "id">) => {
     try {
-      const res = await fetch(`/api/students/${student.id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(updatedData),
-      });
+      const res = await updateStudent(student.id, updatedData);
+
       if (res.ok) {
         toast.success("Student updated successfully!");
         router.push(`/students/${student.id}`);
       } else {
-        const error = await res.json();
-        toast.error(`Update failed: ${error.message || "Unknown error"}`);
+        toast.error(`Update failed: ${res.data?.message || "Unknown error"}`);
       }
     } catch (err) {
       toast.error(`Something went wrong: ${(err as Error).message}`);
@@ -56,15 +52,19 @@ export default function EditStudentPage({ student }: EditStudentPageProps) {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { id } = context.params!;
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/students/${id}`
-  );
 
-  const student = await res.json();
+  try {
+    const student = await fetchStudentById(id as string);
 
-  return {
-    props: {
-      student,
-    },
-  };
+    return {
+      props: {
+        student,
+      },
+    };
+  } catch (error) {
+    // Optionally handle errors, e.g., redirect to 404 page or return notFound
+    return {
+      notFound: true,
+    };
+  }
 };

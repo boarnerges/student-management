@@ -1,40 +1,112 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/pages/api-reference/create-next-app).
+# Student Management App
 
-## Getting Started
+A simple student management web application built with **Next.js**, **TypeScript**, **Tailwind CSS**, and **Mock API integration**. It allows you to view, add, update, and delete student records.
 
-First, run the development server:
+---
+
+## Features
+
+- List all students
+- View student details
+- Add new student
+- Update student information
+- Delete student
+- Supports both local (in-memory) and remote (MockAPI) data sources
+
+---
+
+## Technologies Used
+
+- [Next.js](https://nextjs.org/)
+- [TypeScript](https://www.typescriptlang.org/)
+- [Tailwind CSS](https://tailwindcss.com/)
+- [MockAPI](https://mockapi.io/)
+- RESTful API (via Next.js API routes and/or MockAPI)
+
+---
+
+## Folder Structure
+
+├── pages/
+│ ├── index.tsx # Homepage (redirects to /students or lists them)
+│ └── students/
+│ ├── index.tsx # List students
+│ └── [id].tsx # View/edit individual student
+│
+├── pages/api/students/ # Next.js API routes
+│ ├── index.ts # GET (all students) / POST (new student)
+│ └── [id].ts # GET, PUT, DELETE for a student
+│
+├── lib/
+│ ├── db.ts # In-memory student data
+│ └── api.ts # API base URL config
+│
+├── types/
+│ └── student.ts # Student type definition
+│
+├── styles/
+│ └── globals.css # Global styles with Tailwind CSS
+
+---
+
+## Setup Instructions
+
+### 1. Clone the Repository
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/boarnerges/student-management.git
+cd student-management
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Install Dependencies
+   Make sure you have Node.js (>=18) installed.
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+npm install
 
-[API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+# or
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) instead of React pages.
+yarn install
 
-This project uses [`next/font`](https://nextjs.org/docs/pages/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+3. Run the Development Server
+   npm run dev
 
-## Learn More
+# or
 
-To learn more about Next.js, take a look at the following resources:
+yarn dev
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn-pages-router) - an interactive Next.js tutorial.
+# Mock API Integration
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+The project uses MockAPI to simulate a real backend.
 
-## Deploy on Vercel
+If you want to switch from local in-memory data (lib/db.ts) to remote API, update the fetch logic to use this URL:
+https://6841a061d48516d1d35c4ea1.mockapi.io/stu/student
+The base URL is already abstracted in lib/api.ts:
+export const API_BASE_URL = "https://6841a061d48516d1d35c4ea1.mockapi.io/stu/student";
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+# Development Approach
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/pages/building-your-application/deploying) for more details.
+This project was built with the following in mind:
+
+Modular Codebase: Components and API routes are split logically.
+
+Type Safety: TypeScript interfaces define the student data shape.
+
+UI-first Thinking: TailwindCSS enables fast UI prototyping.
+
+Progressive Enhancement: Started with local mock DB, easily extendable to real APIs.
+
+Separation of Concerns: API logic, types, styles, and components are modular and well-separated.
+
+# Future Improvements
+
+Add form validation (with libraries like react-hook-form or zod)
+
+Integrate persistent database (MongoDB or Supabase)
+
+Add authentication for protected actions
+
+Add pagination to student list
+
+# Contributions
+
+Feel free to fork the repo, open issues, or submit PRs!

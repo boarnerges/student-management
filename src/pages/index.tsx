@@ -18,6 +18,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
+import { fetchStudents } from "@/lib/api";
 
 // 1. Page Props
 interface StudentListPageProps {
@@ -28,29 +29,31 @@ interface StudentListPageProps {
 export const getServerSideProps: GetServerSideProps<
   StudentListPageProps
 > = async () => {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/students`);
-  const students: Student[] = await res.json();
-
-  return {
-    props: {
-      students,
-    },
-  };
+  try {
+    const students = await fetchStudents();
+    return {
+      props: { students },
+    };
+  } catch (error) {
+    return {
+      props: { students: [] },
+    };
+  }
 };
 
 // 3. Component
 const StudentListPage = ({ students }: StudentListPageProps) => {
   const router = useRouter();
+  const [search, setSearch] = useState("");
+  const [toastShown, setToastShown] = useState(false);
 
   useEffect(() => {
     if (router.query.success === "added") {
       toast.success("Student added successfully!");
+      setToastShown(true);
       router.replace("/", undefined, { shallow: true });
     }
-  }, [router]);
-
-  // State to hold the search input value
-  const [search, setSearch] = useState("");
+  }, [router.query.success, toastShown]);
 
   // Filter students by name, major, or GPA based on search query
   const filteredStudents = students.filter(
@@ -82,43 +85,49 @@ const StudentListPage = ({ students }: StudentListPageProps) => {
         <Text>No students found.</Text>
       ) : (
         <SimpleGrid columns={{ base: 1, sm: 2, md: 3 }} gap={6}>
-          {filteredStudents.map((student) => (
-            <Link key={student.id} href={`/students/${student.id}`} passHref>
-              <Card.Root
-                className="p-2"
-                key={student.id}
-                border="1px solid #E2E8F0"
-                borderRadius="md"
-                _hover={{ shadow: "lg", transform: "scale(1.02)" }}
-                transition="0.2s"
-              >
-                <Card.Header>
-                  <Heading size="md">{student.name}</Heading>
-                </Card.Header>
-                <Card.Body>
-                  <VStack align="start" gap={2}>
-                    <Text>
-                      <strong>Reg. No:</strong> {student.registrationNumber}
-                    </Text>
-                    <Text>
-                      <strong>Major:</strong> {student.major}
-                    </Text>
-                    <Text>
-                      <strong>DOB:</strong>{" "}
-                      {new Intl.DateTimeFormat("en-GB", {
-                        day: "2-digit",
-                        month: "2-digit",
-                        year: "numeric",
-                      }).format(new Date(student.dob))}
-                    </Text>
-                    <Text>
-                      <strong>GPA:</strong> {student.gpa.toFixed(2)}
-                    </Text>
-                  </VStack>
-                </Card.Body>
-              </Card.Root>
-            </Link>
-          ))}
+          {filteredStudents.map((student, index) => {
+            console.log(`Student ${index + 1}:`, student);
+            console.log(`Student ID:`, student.id); // Just the ID
+            console.log("Link to student detail:", `/students/${student.id}`);
+
+            return (
+              <Link key={student.id} href={`/students/${student.id}`} passHref>
+                <Card.Root
+                  className="p-2"
+                  key={student.id}
+                  border="1px solid #E2E8F0"
+                  borderRadius="md"
+                  _hover={{ shadow: "lg", transform: "scale(1.02)" }}
+                  transition="0.2s"
+                >
+                  <Card.Header>
+                    <Heading size="md">{student.name}</Heading>
+                  </Card.Header>
+                  <Card.Body>
+                    <VStack align="start" gap={2}>
+                      <Text>
+                        <strong>Reg. No:</strong> {student.registrationNumber}
+                      </Text>
+                      <Text>
+                        <strong>Major:</strong> {student.major}
+                      </Text>
+                      <Text>
+                        <strong>DOB:</strong>{" "}
+                        {new Intl.DateTimeFormat("en-GB", {
+                          day: "2-digit",
+                          month: "2-digit",
+                          year: "numeric",
+                        }).format(new Date(student.dob))}
+                      </Text>
+                      <Text>
+                        <strong>GPA:</strong> {student.gpa.toFixed(2)}
+                      </Text>
+                    </VStack>
+                  </Card.Body>
+                </Card.Root>
+              </Link>
+            );
+          })}
         </SimpleGrid>
       )}
     </Box>

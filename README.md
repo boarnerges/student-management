@@ -17,11 +17,15 @@ A simple student management web application built with **Next.js**, **TypeScript
 
 ## Technologies Used
 
-- [Next.js](https://nextjs.org/)
-- [TypeScript](https://www.typescriptlang.org/)
-- [Tailwind CSS](https://tailwindcss.com/)
-- [MockAPI](https://mockapi.io/)
-- RESTful API (via Next.js API routes and/or MockAPI)
+Next.js — React framework with SSR and API routes
+
+TypeScript — Typed JavaScript for safer code
+
+Tailwind CSS — Utility-first CSS framework for styling
+
+Chakra UI — Accessible and composable React UI components
+
+MockAPI — Fake REST API for prototyping and testing
 
 ---
 

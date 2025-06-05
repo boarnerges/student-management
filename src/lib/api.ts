@@ -1,4 +1,6 @@
 // lib/api.ts
+
+import type { Student } from "@/types/student";
 export const API_BASE_URL = "https://6841a061d48516d1d35c4ea1.mockapi.io/stu";
 // Fetch all students (GET)
 export async function fetchStudents() {
@@ -23,7 +25,7 @@ export async function fetchStudentById(id: string) {
 }
 
 // Create a new student (POST)
-export async function createStudent(data: any) {
+export async function createStudent(data: Omit<Student, "id">) {
   const res = await fetch(`${API_BASE_URL}/student`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },

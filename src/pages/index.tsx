@@ -35,6 +35,8 @@ export const getServerSideProps: GetServerSideProps<
       props: { students },
     };
   } catch (error) {
+    console.error("Error fetching students in getServerSideProps:", error);
+
     return {
       props: { students: [] },
     };
@@ -53,7 +55,7 @@ const StudentListPage = ({ students }: StudentListPageProps) => {
       setToastShown(true);
       router.replace("/", undefined, { shallow: true });
     }
-  }, [router.query.success, toastShown]);
+  }, [router, router.query.success, toastShown]);
 
   // Filter students by name, major, or GPA based on search query
   const filteredStudents = students.filter(

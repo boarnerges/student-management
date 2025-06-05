@@ -62,7 +62,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       },
     };
   } catch (error) {
-    // Optionally handle errors, e.g., redirect to 404 page or return notFound
+    console.error("Error loading student for editing:", error);
     return {
       notFound: true,
     };

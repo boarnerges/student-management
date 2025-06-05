@@ -16,20 +16,15 @@ export default function NewStudentPage() {
     try {
       await createStudent(data);
       toaster.create({
-        title: "Student created",
-        description: "Student has been added successfully.",
-        status: "success",
+        title: "Student has been added successfully.",
         duration: 3000,
-        isClosable: true,
       });
       router.push("/?success=added");
     } catch (error) {
+      console.error("Failed to create student:", error);
       toaster.create({
-        title: "Error",
-        description: "Could not create student.",
-        status: "error",
+        title: "Could not create student. Please try again.",
         duration: 3000,
-        isClosable: true,
       });
     }
   };

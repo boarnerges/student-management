@@ -5,7 +5,7 @@ import { Student } from "@/types/student";
 export const students: Student[] = [
   {
     id: "1",
-    name: "Alice Johnson Olumide",
+    name: "Alice Johnson",
     registrationNumber: "REG20230001",
     major: "Computer Science",
     dob: "2001-06-15",

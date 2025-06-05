@@ -1,115 +1,128 @@
-import Image from "next/image";
-import { Geist, Geist_Mono } from "next/font/google";
+// pages/students/index.tsx
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
+import React, { useState } from "react";
+import { GetServerSideProps } from "next";
+import { Student } from "@/types/student";
+import {
+  Box,
+  Heading,
+  SimpleGrid,
+  Text,
+  VStack,
+  Flex,
+  Button,
+  Input,
+} from "@chakra-ui/react";
+import { Card } from "@chakra-ui/react";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import { useEffect } from "react";
+import { toast } from "react-toastify";
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
-export default function Home() {
-  return (
-    <div
-      className={`${geistSans.className} ${geistMono.className} grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]`}
-    >
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/pages/index.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
-  );
+// 1. Page Props
+interface StudentListPageProps {
+  students: Student[];
 }
+
+// 2. Server-side Fetching
+export const getServerSideProps: GetServerSideProps<
+  StudentListPageProps
+> = async () => {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/students`);
+  const students: Student[] = await res.json();
+
+  return {
+    props: {
+      students,
+    },
+  };
+};
+
+// 3. Component
+const StudentListPage = ({ students }: StudentListPageProps) => {
+  const router = useRouter();
+
+  useEffect(() => {
+    if (router.query.success === "added") {
+      toast.success("Student added successfully!");
+      router.replace("/", undefined, { shallow: true });
+    }
+  }, [router]);
+
+  // State to hold the search input value
+  const [search, setSearch] = useState("");
+
+  // Filter students by name, major, or GPA based on search query
+  const filteredStudents = students.filter(
+    (s) =>
+      s.name.toLowerCase().includes(search.toLowerCase()) ||
+      s.major.toLowerCase().includes(search.toLowerCase()) ||
+      s.gpa.toString().includes(search)
+  );
+  return (
+    <Box p={8}>
+      <Flex justify="space-between" align="center" mb={6}>
+        <Heading size="lg">Student List</Heading>
+        <Button colorScheme="teal" onClick={() => router.push("/students/new")}>
+          + Add Student
+        </Button>
+      </Flex>
+
+      <Box mb={6}>
+        <Input
+          placeholder="Search by name, major, or GPA"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          size="md"
+          maxW="400px"
+        />
+      </Box>
+
+      {filteredStudents.length === 0 ? (
+        <Text>No students found.</Text>
+      ) : (
+        <SimpleGrid columns={{ base: 1, sm: 2, md: 3 }} gap={6}>
+          {filteredStudents.map((student) => (
+            <Link key={student.id} href={`/students/${student.id}`} passHref>
+              <Card.Root
+                className="p-2"
+                key={student.id}
+                border="1px solid #E2E8F0"
+                borderRadius="md"
+                _hover={{ shadow: "lg", transform: "scale(1.02)" }}
+                transition="0.2s"
+              >
+                <Card.Header>
+                  <Heading size="md">{student.name}</Heading>
+                </Card.Header>
+                <Card.Body>
+                  <VStack align="start" gap={2}>
+                    <Text>
+                      <strong>Reg. No:</strong> {student.registrationNumber}
+                    </Text>
+                    <Text>
+                      <strong>Major:</strong> {student.major}
+                    </Text>
+                    <Text>
+                      <strong>DOB:</strong>{" "}
+                      {new Intl.DateTimeFormat("en-GB", {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "numeric",
+                      }).format(new Date(student.dob))}
+                    </Text>
+                    <Text>
+                      <strong>GPA:</strong> {student.gpa.toFixed(2)}
+                    </Text>
+                  </VStack>
+                </Card.Body>
+              </Card.Root>
+            </Link>
+          ))}
+        </SimpleGrid>
+      )}
+    </Box>
+  );
+};
+
+export default StudentListPage;

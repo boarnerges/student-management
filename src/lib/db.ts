@@ -1,0 +1,86 @@
+// src/lib/db.ts
+
+import { Student } from "@/types/student";
+
+export let students: Student[] = [
+  {
+    id: "1",
+    name: "Alice Johnson",
+    registrationNumber: "REG20230001",
+    major: "Computer Science",
+    dob: "2001-06-15",
+    gpa: 3.8,
+  },
+  {
+    id: "2",
+    name: "Bob Smith",
+    registrationNumber: "REG20230002",
+    major: "Mathematics",
+    dob: "2000-08-20",
+    gpa: 3.5,
+  },
+  {
+    id: "3",
+    name: "Chidi Nwosu",
+    registrationNumber: "REG20230003",
+    major: "Physics",
+    dob: "1999-12-01",
+    gpa: 3.2,
+  },
+  {
+    id: "4",
+    name: "Diana Prince",
+    registrationNumber: "REG20230004",
+    major: "History",
+    dob: "2002-03-10",
+    gpa: 3.7,
+  },
+  {
+    id: "5",
+    name: "Ethan Clark",
+    registrationNumber: "REG20230005",
+    major: "Biology",
+    dob: "2001-11-22",
+    gpa: 3.4,
+  },
+  {
+    id: "6",
+    name: "Fatima Bello",
+    registrationNumber: "REG20230006",
+    major: "Computer Science",
+    dob: "2000-07-08",
+    gpa: 3.9,
+  },
+  {
+    id: "7",
+    name: "George Osei",
+    registrationNumber: "REG20230007",
+    major: "Economics",
+    dob: "1998-05-30",
+    gpa: 3.3,
+  },
+  {
+    id: "8",
+    name: "Hannah Lee",
+    registrationNumber: "REG20230008",
+    major: "Psychology",
+    dob: "2002-09-14",
+    gpa: 3.6,
+  },
+  {
+    id: "9",
+    name: "Isaac Okafor",
+    registrationNumber: "REG20230009",
+    major: "Physics",
+    dob: "1999-01-25",
+    gpa: 3.1,
+  },
+  {
+    id: "10",
+    name: "Jasmine Patel",
+    registrationNumber: "REG20230010",
+    major: "Chemistry",
+    dob: "2001-12-05",
+    gpa: 3.85,
+  },
+];

@@ -33,8 +33,11 @@ export const StudentForm = ({ initialData, onSubmit }: StudentFormProps) => {
 
   useEffect(() => {
     if (initialData) {
-      const { ...rest } = initialData;
-      setForm(rest);
+      const { gpa, ...rest } = initialData;
+      setForm({
+        ...rest,
+        gpa: gpa === undefined || gpa === null ? 0 : gpa,
+      });
     }
   }, [initialData]);
 
@@ -45,7 +48,7 @@ export const StudentForm = ({ initialData, onSubmit }: StudentFormProps) => {
 
     setForm((prev) => ({
       ...prev,
-      [name]: name === "gpa" ? parseFloat(value) : value,
+      [name]: name === "gpa" ? (value === "" ? "" : parseFloat(value)) : value,
     }));
 
     // Clear the error as user types
@@ -63,7 +66,7 @@ export const StudentForm = ({ initialData, onSubmit }: StudentFormProps) => {
       newErrors.registrationNumber = "Registration number is required.";
     if (!form.dob) newErrors.dob = "Date of birth is required.";
     if (!form.major) newErrors.major = "Major is required.";
-    if (form.gpa === undefined || isNaN(form.gpa)) {
+    if (isNaN(form.gpa)) {
       newErrors.gpa = "GPA must be a number.";
     } else if (form.gpa < 0 || form.gpa > 4) {
       newErrors.gpa = "GPA must be between 0.0 and 4.0.";

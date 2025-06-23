@@ -99,7 +99,7 @@ const StudentListPage = ({ students }: StudentListPageProps) => {
         <Text>No students found.</Text>
       ) : (
         <SimpleGrid columns={{ base: 1, sm: 2, md: 3 }} gap={6}>
-          {filteredStudents.map((student, index) => {
+          {filteredStudents.map((student) => {
             return (
               <Link key={student.id} href={`/students/${student.id}`} passHref>
                 <Card.Root

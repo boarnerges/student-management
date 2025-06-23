@@ -11,7 +11,7 @@ export function withAuth<T>(Component: React.ComponentType<T>) {
       if (!isAuthenticated()) {
         router.push("/login");
       }
-    }, []);
+    }, [router]);
 
     return <Component {...props} />;
   };

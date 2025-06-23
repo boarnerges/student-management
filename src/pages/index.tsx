@@ -1,6 +1,7 @@
 // pages/students/index.tsx
 
 import React, { useState } from "react";
+import { withAuth } from "@/hoc/withAuth";
 import { GetServerSideProps } from "next";
 import { Student } from "@/types/student";
 import {
@@ -28,7 +29,18 @@ interface StudentListPageProps {
 // 2. Server-side Fetching
 export const getServerSideProps: GetServerSideProps<
   StudentListPageProps
-> = async () => {
+> = async (ctx) => {
+  const token = ctx.req.cookies.token;
+  console.log("Fetching students with token:", token);
+
+  if (!token) {
+    return {
+      redirect: {
+        destination: "/login",
+        permanent: false,
+      },
+    };
+  }
   try {
     const students = await fetchStudents();
     return {
@@ -43,7 +55,7 @@ export const getServerSideProps: GetServerSideProps<
   }
 };
 
-// 3. Component
+// 3. Component; function
 const StudentListPage = ({ students }: StudentListPageProps) => {
   const router = useRouter();
   const [search, setSearch] = useState("");
@@ -88,10 +100,6 @@ const StudentListPage = ({ students }: StudentListPageProps) => {
       ) : (
         <SimpleGrid columns={{ base: 1, sm: 2, md: 3 }} gap={6}>
           {filteredStudents.map((student, index) => {
-            console.log(`Student ${index + 1}:`, student);
-            console.log(`Student ID:`, student.id); // Just the ID
-            console.log("Link to student detail:", `/students/${student.id}`);
-
             return (
               <Link key={student.id} href={`/students/${student.id}`} passHref>
                 <Card.Root
@@ -136,4 +144,4 @@ const StudentListPage = ({ students }: StudentListPageProps) => {
   );
 };
 
-export default StudentListPage;
+export default withAuth(StudentListPage);

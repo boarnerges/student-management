@@ -2,6 +2,7 @@
 
 import type { Student } from "@/types/student";
 export const API_BASE_URL = "https://6841a061d48516d1d35c4ea1.mockapi.io/stu";
+
 // Fetch all students (GET)
 export async function fetchStudents() {
   const res = await fetch(`${API_BASE_URL}/student`);

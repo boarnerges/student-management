@@ -1,4 +1,5 @@
 import { useRouter } from "next/router";
+import { withAuth } from "@/hoc/withAuth";
 import { Box, Heading } from "@chakra-ui/react";
 import { StudentForm } from "@/components/StudentForm";
 import type { Student } from "@/types/student";
@@ -9,7 +10,7 @@ const toaster = createToaster({
   placement: "top-end",
 });
 
-export default function NewStudentPage() {
+function NewStudentPage() {
   const router = useRouter();
 
   const handleCreate = async (data: Omit<Student, "id">) => {
@@ -36,3 +37,5 @@ export default function NewStudentPage() {
     </Box>
   );
 }
+
+export default withAuth(NewStudentPage);

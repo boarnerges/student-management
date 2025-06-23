@@ -1,4 +1,5 @@
 import { GetServerSideProps } from "next";
+import { withAuth } from "@/hoc/withAuth";
 import { Box, Button, Flex } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { StudentForm } from "@/components/StudentForm";
@@ -12,7 +13,7 @@ interface EditStudentPageProps {
   student: Student;
 }
 
-export default function EditStudentPage({ student }: EditStudentPageProps) {
+function EditStudentPage({ student }: EditStudentPageProps) {
   const router = useRouter();
 
   const handleUpdate = async (updatedData: Omit<Student, "id">) => {
@@ -51,6 +52,18 @@ export default function EditStudentPage({ student }: EditStudentPageProps) {
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
+  const token = context.req.cookies.token;
+  console.log("Fetching students with token:", token);
+
+  if (!token) {
+    return {
+      redirect: {
+        destination: "/login",
+        permanent: false,
+      },
+    };
+  }
+
   const { id } = context.params!;
 
   try {
@@ -68,3 +81,4 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     };
   }
 };
+export default withAuth(EditStudentPage);

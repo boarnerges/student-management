@@ -1,4 +1,5 @@
 import { GetServerSideProps } from "next";
+import { withAuth } from "@/hoc/withAuth";
 import { useRouter } from "next/router";
 import {
   Box,
@@ -19,7 +20,31 @@ interface StudentDetailPageProps {
   student: Student | null;
 }
 
-export default function StudentDetailPage({ student }: StudentDetailPageProps) {
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const token = context.req.cookies.token;
+  console.log("Fetching students with token:", token);
+
+  if (!token) {
+    return {
+      redirect: {
+        destination: "/login",
+        permanent: false,
+      },
+    };
+  }
+  const { id } = context.params!;
+  console.log("Fetching student by id:", id); // Add this
+
+  try {
+    const student = await fetchStudentById(id as string);
+    return { props: { student } };
+  } catch (error) {
+    console.error("Error fetching student:", error);
+    return { props: { student: null } };
+  }
+};
+
+function StudentDetailPage({ student }: StudentDetailPageProps) {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
@@ -99,15 +124,5 @@ export default function StudentDetailPage({ student }: StudentDetailPageProps) {
     </Box>
   );
 }
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { id } = context.params!;
-  console.log("Fetching student by id:", id); // Add this
 
-  try {
-    const student = await fetchStudentById(id as string);
-    return { props: { student } };
-  } catch (error) {
-    console.error("Error fetching student:", error);
-    return { props: { student: null } };
-  }
-};
+export default withAuth(StudentDetailPage);

@@ -13,7 +13,6 @@ import {
   Flex,
   Button,
   Input,
-  Icon,
 } from "@chakra-ui/react";
 import { Card } from "@chakra-ui/react";
 import Link from "next/link";

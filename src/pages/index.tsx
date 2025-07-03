@@ -188,7 +188,7 @@ const StudentListPage = ({ students }: StudentListPageProps) => {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               size="lg"
-              bg="white"
+              // bg="white"
               borderWidth="2px"
               borderColor="gray.200"
               _hover={{ borderColor: "teal.300" }}

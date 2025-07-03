@@ -179,7 +179,7 @@ const StudentListPage = ({ students }: StudentListPageProps) => {
       {/* Search Section */}
       <Box mb={8}>
         <VStack gap={4} align="stretch">
-          <Heading size="md" color="gray.700">
+          <Heading size="md" color="gray.900">
             Find Students
           </Heading>
           <Box position="relative" maxW="500px">
@@ -206,7 +206,7 @@ const StudentListPage = ({ students }: StudentListPageProps) => {
               left={4}
               top="50%"
               transform="translateY(-50%)"
-              color="gray.400"
+              color="gray.700"
               pointerEvents="none"
             >
               🔍
@@ -239,7 +239,7 @@ const StudentListPage = ({ students }: StudentListPageProps) => {
       ) : (
         <VStack gap={6} align="stretch">
           <Flex justify="space-between" align="center">
-            <Text fontSize="lg" fontWeight="semibold" color="gray.700">
+            <Text fontSize="lg" fontWeight="semibold" color="gray.900">
               {filteredStudents.length} Student
               {filteredStudents.length !== 1 ? "s" : ""} Found
             </Text>

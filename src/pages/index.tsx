@@ -142,10 +142,10 @@ const StudentListPage = ({ students }: StudentListPageProps) => {
     //   )}
     // </Box>
 
-    <Box p={8} bg="gray.50" minH="100vh">
+    <Box p={8} minH="100vh">
       {/* Header Section with Gradient Background */}
       <Box
-        bgGradient="linear(135deg, teal.500 0%, teal.600 100%)"
+        // bgGradient="linear(135deg, teal.500 0%, teal.600 100%)"
         p={8}
         borderRadius="xl"
         mb={8}

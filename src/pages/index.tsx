@@ -229,7 +229,7 @@ const StudentListPage = ({ students }: StudentListPageProps) => {
           <Text fontSize="4xl" mb={4}>
             👥
           </Text>
-          <Heading size="md" color="gray.500" mb={2}>
+          <Heading size="md" color="gray.200" mb={2}>
             No Students Found
           </Heading>
           <Text color="gray.400">
@@ -239,7 +239,7 @@ const StudentListPage = ({ students }: StudentListPageProps) => {
       ) : (
         <VStack gap={6} align="stretch">
           <Flex justify="space-between" align="center">
-            <Text fontSize="lg" fontWeight="semibold" color="gray.900">
+            <Text fontSize="lg" fontWeight="semibold" color="gray.200">
               {filteredStudents.length} Student
               {filteredStudents.length !== 1 ? "s" : ""} Found
             </Text>

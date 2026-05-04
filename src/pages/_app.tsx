@@ -10,8 +10,8 @@ import { Layout } from "@/components/Layout";
 export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
 
-  // Only show layout on authenticated pages
-  const noLayoutRoutes = ["/login"];
+  // Only show the app shell on authenticated workspace pages.
+  const noLayoutRoutes = ["/", "/login"];
   const showLayout = !noLayoutRoutes.includes(router.pathname);
 
   return (

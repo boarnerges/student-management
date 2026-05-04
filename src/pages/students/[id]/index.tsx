@@ -1,28 +1,31 @@
 import { GetServerSideProps } from "next";
-import { withAuth } from "@/hoc/withAuth";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import {
+  Alert,
+  Badge,
   Box,
   Button,
+  Card,
+  Flex,
   Heading,
+  HStack,
+  SimpleGrid,
   Text,
   Stack,
-  Flex,
-  HStack,
-  Alert,
 } from "@chakra-ui/react";
-import { Student } from "@/types/student";
 import { useState } from "react";
-import Link from "next/link";
-import { fetchStudentById, deleteStudentById } from "@/lib/api";
+import { FiArrowLeft, FiEdit, FiTrash2 } from "react-icons/fi";
+import { withAuth } from "@/hoc/withAuth";
+import { deleteStudentById, fetchStudentById } from "@/lib/api";
+import type { Student } from "@/types/student";
 
 interface StudentDetailPageProps {
-  student: Student | null;
+  student: Student;
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const token = context.req.cookies.token;
-  console.log("Fetching students with token:", token);
 
   if (!token) {
     return {
@@ -32,15 +35,15 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       },
     };
   }
+
   const { id } = context.params!;
-  console.log("Fetching student by id:", id); // Add this
 
   try {
     const student = await fetchStudentById(id as string);
     return { props: { student } };
   } catch (error) {
     console.error("Error fetching student:", error);
-    return { props: { student: null } };
+    return { notFound: true };
   }
 };
 
@@ -49,21 +52,12 @@ function StudentDetailPage({ student }: StudentDetailPageProps) {
   const [error, setError] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
 
-  if (!student) {
-    return (
-      <Box p={6}>
-        <Heading>Student Not Found</Heading>
-        <Text>The student with this ID does not exist.</Text>
-      </Box>
-    );
-  }
-
   async function handleDelete() {
     setDeleting(true);
     setError(null);
     try {
       await deleteStudentById(student.id);
-      router.push("/");
+      router.push("/students");
     } catch (err) {
       setError((err as Error).message);
       setDeleting(false);
@@ -71,56 +65,92 @@ function StudentDetailPage({ student }: StudentDetailPageProps) {
   }
 
   return (
-    <Box p={6} maxW="md" mx="auto">
-      <Flex mb={4}>
-        <Link href="/" passHref>
-          <Button variant="outline" colorScheme="teal">
-            Back to List
+    <Box pb={12} maxW="4xl" mx="auto">
+      <Flex mb={6}>
+        <Link href="/students" passHref>
+          <Button variant="outline">
+            <FiArrowLeft />
+            Back to Students
           </Button>
         </Link>
       </Flex>
 
-      <Heading mb={4}>{student.name}</Heading>
+      <Card.Root borderRadius="lg" overflow="hidden">
+        <Box bg="gray.950" color="white" p={{ base: 6, md: 8 }}>
+          <Flex
+            direction={{ base: "column", md: "row" }}
+            justify="space-between"
+            align={{ base: "start", md: "center" }}
+            gap={5}
+          >
+            <Stack gap={2}>
+              <Badge alignSelf="flex-start" colorPalette="teal">
+                Student Record
+              </Badge>
+              <Heading size="2xl">{student.name}</Heading>
+              <Text color="gray.300">{student.registrationNumber}</Text>
+            </Stack>
+            <Badge colorPalette={student.gpa >= 3.5 ? "green" : "yellow"} p={3}>
+              GPA {typeof student.gpa === "number" ? student.gpa.toFixed(2) : "N/A"}
+            </Badge>
+          </Flex>
+        </Box>
 
-      <Stack gap={3} mb={6}>
-        <Text>
-          <strong>ID:</strong> {student.id}
-        </Text>
-        <Text>
-          <strong>Registration Number:</strong> {student.registrationNumber}
-        </Text>
-        <Text>
-          <strong>Major:</strong> {student.major}
-        </Text>
-        <Text>
-          <strong>Date of Birth:</strong>{" "}
-          {student.dob && !isNaN(new Date(student.dob).getTime())
-            ? new Date(student.dob).toISOString().split("T")[0]
-            : "N/A"}
-        </Text>
-        <Text>
-          <strong>GPA:</strong>{" "}
-          {typeof student.gpa === "number" ? student.gpa.toFixed(2) : "N/A"}
-        </Text>
-      </Stack>
+        <Card.Body p={{ base: 6, md: 8 }}>
+          <SimpleGrid columns={{ base: 1, md: 2 }} gap={6} mb={8}>
+            <Box>
+              <Text color="gray.500" fontSize="sm" fontWeight="bold">
+                STUDENT ID
+              </Text>
+              <Text fontSize="lg">{student.id}</Text>
+            </Box>
+            <Box>
+              <Text color="gray.500" fontSize="sm" fontWeight="bold">
+                REGISTRATION NUMBER
+              </Text>
+              <Text fontSize="lg">{student.registrationNumber}</Text>
+            </Box>
+            <Box>
+              <Text color="gray.500" fontSize="sm" fontWeight="bold">
+                MAJOR
+              </Text>
+              <Text fontSize="lg">{student.major}</Text>
+            </Box>
+            <Box>
+              <Text color="gray.500" fontSize="sm" fontWeight="bold">
+                DATE OF BIRTH
+              </Text>
+              <Text fontSize="lg">
+                {student.dob && !Number.isNaN(new Date(student.dob).getTime())
+                  ? new Date(student.dob).toISOString().split("T")[0]
+                  : "N/A"}
+              </Text>
+            </Box>
+          </SimpleGrid>
 
-      {error && (
-        <Alert.Root status="error" mb={4}>
-          <Alert.Indicator />
-          <Alert.Title>Error:</Alert.Title>
-          <Alert.Description>{error}</Alert.Description>
-        </Alert.Root>
-      )}
+          {error && (
+            <Alert.Root status="error" mb={5}>
+              <Alert.Indicator />
+              <Alert.Title>Error:</Alert.Title>
+              <Alert.Description>{error}</Alert.Description>
+            </Alert.Root>
+          )}
 
-      <HStack gap={4}>
-        <Link href={`/students/${student.id}/edit`} passHref>
-          <Button colorScheme="blue">Edit</Button>
-        </Link>
+          <HStack gap={4}>
+            <Link href={`/students/${student.id}/edit`} passHref>
+              <Button colorPalette="blue">
+                <FiEdit />
+                Edit
+              </Button>
+            </Link>
 
-        <Button colorScheme="red" onClick={handleDelete} loading={deleting}>
-          Delete
-        </Button>
-      </HStack>
+            <Button colorPalette="red" onClick={handleDelete} loading={deleting}>
+              <FiTrash2 />
+              Delete
+            </Button>
+          </HStack>
+        </Card.Body>
+      </Card.Root>
     </Box>
   );
 }

@@ -12,7 +12,7 @@ export function LogoutButton() {
   };
 
   return (
-    <Button colorScheme="red" onClick={handleLogout}>
+    <Button colorPalette="red" onClick={handleLogout}>
       Logout
     </Button>
   );

@@ -1,14 +1,28 @@
+import { GetServerSideProps } from "next";
+import Link from "next/link";
 import { useRouter } from "next/router";
+import { Box, Button, Flex, Heading, Stack, Text } from "@chakra-ui/react";
+import { FiArrowLeft } from "react-icons/fi";
+import { toast } from "react-toastify";
 import { withAuth } from "@/hoc/withAuth";
-import { Box, Heading } from "@chakra-ui/react";
 import { StudentForm } from "@/components/StudentForm";
-import type { Student } from "@/types/student";
 import { createStudent } from "@/lib/api";
-import { createToaster } from "@chakra-ui/react";
+import type { Student } from "@/types/student";
 
-const toaster = createToaster({
-  placement: "top-end",
-});
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const token = context.req.cookies.token;
+
+  if (!token) {
+    return {
+      redirect: {
+        destination: "/login",
+        permanent: false,
+      },
+    };
+  }
+
+  return { props: {} };
+};
 
 function NewStudentPage() {
   const router = useRouter();
@@ -16,23 +30,32 @@ function NewStudentPage() {
   const handleCreate = async (data: Omit<Student, "id">) => {
     try {
       await createStudent(data);
-      toaster.create({
-        title: "Student has been added successfully.",
-        duration: 3000,
-      });
-      router.push("/?success=added");
+      toast.success("Student has been added successfully");
+      router.push("/students?success=added");
     } catch (error) {
       console.error("Failed to create student:", error);
-      toaster.create({
-        title: "Could not create student. Please try again.",
-        duration: 3000,
-      });
+      toast.error("Could not create student. Please try again.");
     }
   };
 
   return (
-    <Box p={6}>
-      <Heading mb={4}>Add New Student</Heading>
+    <Box pb={12}>
+      <Flex mb={6}>
+        <Link href="/students" passHref>
+          <Button variant="outline">
+            <FiArrowLeft />
+            Back to Students
+          </Button>
+        </Link>
+      </Flex>
+
+      <Stack gap={2} mb={8}>
+        <Heading size="2xl">Add new student</Heading>
+        <Text color="gray.600">
+          Create a complete student profile for the directory.
+        </Text>
+      </Stack>
+
       <StudentForm onSubmit={handleCreate} />
     </Box>
   );

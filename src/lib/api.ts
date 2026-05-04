@@ -15,9 +15,6 @@ export async function fetchStudentById(id: string) {
   const res = await fetch(`${API_BASE_URL}/student/${id}`);
   const data = await res.json();
 
-  console.log("Status:", res.status);
-  console.log("Data received:", data);
-
   if (!res.ok || !data || data.message || !data.id) {
     throw new Error(data.message || "Failed to fetch student");
   }
@@ -36,8 +33,7 @@ export async function createStudent(data: Omit<Student, "id">) {
   return res.json();
 }
 
-// Edit student (POST)
-// Better return structure with raw response info
+// Update student (PUT)
 export async function updateStudent(id: string, data: Omit<Student, "id">) {
   try {
     const res = await fetch(`${API_BASE_URL}/student/${id}`, {

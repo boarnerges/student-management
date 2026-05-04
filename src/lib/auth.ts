@@ -1,3 +1,5 @@
+//src/lib/auth.ts
+
 import { setCookie, destroyCookie, parseCookies } from "nookies";
 
 export const AUTH_TOKEN_KEY = "token";
@@ -24,6 +26,8 @@ export function login(email: string, password: string): boolean {
   setCookie(null, AUTH_TOKEN_KEY, token, {
     maxAge: 30 * 24 * 60 * 60,
     path: "/",
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
   });
 
   return true;
@@ -31,5 +35,5 @@ export function login(email: string, password: string): boolean {
 
 //  Remove token from cookies
 export function logout() {
-  destroyCookie(null, AUTH_TOKEN_KEY);
+  destroyCookie(null, AUTH_TOKEN_KEY, { path: "/" });
 }
